@@ -1,0 +1,28 @@
+ name: Configurar VM e fazer deploy da aplicação
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Atualizar pacotes
+      apt:
+        update_cache: yes
+        upgrade: yes
+
+    - name: Instalar Docker e Docker Compose
+      apt:
+        name:
+          - docker.io
+          - docker-compose
+        state: present
+
+    - name: Clonar repositório do projeto
+      git:
+        repo: https://github.com/Mamutes-Pequenos/Terra_Ansible
+        dest: /home/ubuntu/app
+        version: main
+        force: yes
+
+    - name: Subir containers com Docker Compose
+      shell: docker-compose up -d
+      args:
+        chdir: /home/ubuntu/app

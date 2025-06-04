@@ -3,7 +3,7 @@ version: '3.8'
 services:
 
   frontend:
-    image: heshambr/frontend
+    image: heshambr/frontend:full
     container_name: frontend
     ports:
       - "80:80"
@@ -14,7 +14,7 @@ services:
     restart: unless-stopped
 
   backend:
-    image: heshambr/green-learning-backend
+    image: heshambr/green-learning-backend:full
     container_name: backend
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/greenlearning

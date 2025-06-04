@@ -26,5 +26,5 @@ resource "google_compute_instance" "vm_instance" {
     ssh-keys = "ubuntu:${file(var.public_key_path)}"
   }
 
-  tags = ["http-server", "https-server"]
+  tags = ["ssh-conexao", "server"]
 }

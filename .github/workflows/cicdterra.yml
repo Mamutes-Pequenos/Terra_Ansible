@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3  # baixa o código
 
-      - name: Set up GCP credentials (from base64)
+      - name: Set up GCP credentials (from json )
         run: |
           mkdir -p /home/runner/gcp_credentials
           echo "${{ secrets.GCP_CREDENTIALS_JSON }}" > /home/runner/gcp_credentials/credentials.json

@@ -20,25 +20,12 @@
           - docker-compose
         state: present
 
-    - name: Garantir que serviço Docker está rodando
-      service:
-        name: docker
-        state: started
-        enabled: true
-
-    - name: Adicionar usuário ubuntu ao grupo docker
-      user:
-        name: ubuntu
-        groups: docker
-        append: yes
-
     - name: Clonar repositório do projeto
       git:
         repo: "{{ repo_url }}"
         dest: "{{ repo_dest }}"
         version: "{{ repo_branch }}"
         force: yes
-        update: yes
 
     - name: Subir containers com Docker Compose
       shell: docker-compose up -d

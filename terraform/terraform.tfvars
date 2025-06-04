@@ -1,2 +1,2 @@
-credentials_file = "terraform-sa.json"  # ou o nome da sua key
-project_id       = "SEU_ID_DO_PROJETO"
+credentials_file = "terraform-sa.json"  # 
+project_id       = "corded-racer-455623-i7"

@@ -1,6 +1,11 @@
- name: Configurar VM e fazer deploy da aplicação
+---
+- name: Configurar VM e fazer deploy da aplicação
   hosts: all
   become: true
+  vars:
+    repo_url: "https://github.com/Mamutes-Pequenos/Terra_Ansible.git"
+    repo_dest: "/home/ubuntu/app"
+    repo_branch: "developer"
 
   tasks:
     - name: Atualizar pacotes
@@ -8,21 +13,34 @@
         update_cache: yes
         upgrade: yes
 
-    - name: Instalar Docker e Docker Compose
+    - name: Instalar Docker e Docker Compose (pacotes Ubuntu)
       apt:
         name:
           - docker.io
           - docker-compose
         state: present
 
+    - name: Garantir que serviço Docker está rodando
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Adicionar usuário ubuntu ao grupo docker
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
     - name: Clonar repositório do projeto
       git:
-        repo: https://github.com/Mamutes-Pequenos/Terra_Ansible
-        dest: /home/ubuntu/app
-        version: main
+        repo: "{{ repo_url }}"
+        dest: "{{ repo_dest }}"
+        version: "{{ repo_branch }}"
         force: yes
+        update: yes
 
     - name: Subir containers com Docker Compose
       shell: docker-compose up -d
       args:
-        chdir: /home/ubuntu/app
+        chdir: "{{ repo_dest }}"

@@ -1,40 +1,53 @@
 version: '3.8'
 
 services:
+
   frontend:
-    build:
-      context: ./frontend  # Diretório do frontend
+    image: heshambr/frontend
+    container_name: frontend
     ports:
-      - "80:80"  # Expõe a porta 80 do contêiner para a porta 80 do host
+      - "80:80"
     networks:
-      - todo-net
+      - front_network
     depends_on:
-      - backend  # Garante que o backend esteja rodando antes de subir o frontend
+      - backend
+    restart: unless-stopped
 
   backend:
-    build:
-      context: ./backend  # Diretório do backend
-    ports:
-      - "5000:5000"  # Expõe a porta 5000 do contêiner para a porta 5000 do host
-    networks:
-      - todo-net
-    depends_on:
-      - mongo  # Garante que o MongoDB esteja rodando antes de iniciar o backend
-
-  mongo:
-    build:
-      context: ./banco-de-dados  # Diretório do backend
-    container_name: mongo-todo
-    ports:
-      - "27017:27017"
-    networks:
-      - todo-net
+    image: heshambr/green-learning-backend
+    container_name: backend
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=rootpassword
-      - MONGO_INITDB_DATABASE=todo-app
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/greenlearning
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=1010
+    depends_on:
+      - postgres
+    networks:
+      - front_network
+      - banco_network
+    restart: unless-stopped
 
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1010
+      POSTGRES_DB: greenlearning
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # - ./db-init:/docker-entrypoint-initdb.d  # descomente se usar scripts SQL para inicializar banco
+    ports:
+      - "5432:5432"
+    networks:
+      - banco_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
 
 networks:
-  todo-net:
+  banco_network:
+    driver: bridge
+  front_network:
     driver: bridge

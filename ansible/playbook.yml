@@ -15,13 +15,12 @@
           - docker-compose
         state: present
 
-  # - name: Clonar repositório do projeto
-#   git:
-#     repo: "https://github.com/Mamutes-Pequenos/Terra_Ansible"
-#     dest: "/home/ubuntu/app"
-#     version: "main"
-#     force: yes
-
+    - name: Clonar repositório do projeto
+      git:
+        repo: "https://github.com/Mamutes-Pequenos/Terra_Ansible"
+        dest: "/home/ubuntu/app"
+        version: "main"
+        force: yes
 
     - name: Subir containers com Docker Compose
       shell: docker-compose up -d

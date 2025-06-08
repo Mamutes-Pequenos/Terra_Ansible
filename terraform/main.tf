@@ -38,5 +38,8 @@ resource "google_compute_firewall" "allow_ports" {
     ports    = ["22", "3000", "9090"]
   }
 
+  source_ranges = ["0.0.0.0/0"]  # <- Isso libera acesso público (cuidado em produção)
+
   target_tags = ["ssh-conexao", "server"]
 }
+

@@ -15,12 +15,21 @@
           - docker-compose
         state: present
 
-    - name: Clonar repositório do projeto
-      git:
-        repo: "https://github.com/Mamutes-Pequenos/Terra_Ansible"
-        dest: "/home/ubuntu/app"
-        version: "main"
-        force: yes
+    - name: Criar diretório /home/ubuntu/app
+      file:
+        path: /home/ubuntu/app
+        state: directory
+        mode: '0755'
+
+    - name: Copiar docker-compose.yml correto
+      copy:
+        src: ../docker-compose.yml
+        dest: /home/ubuntu/app/docker-compose.yml
+
+    - name: Copiar prometheus.yml
+      copy:
+        src: ../prometheus.yml
+        dest: /home/ubuntu/app/prometheus.yml
 
     - name: Subir containers com Docker Compose
       shell: docker-compose up -d

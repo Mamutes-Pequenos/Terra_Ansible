@@ -3,7 +3,7 @@ name: CI/CD Pipeline for Terraform and Ansible
 on:
   push:
     branches:
-      - developer  # dispara só ao push na branch developer
+      - developer2  # dispara só ao push na branch developer
 
 jobs:
   deploy:

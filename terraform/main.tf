@@ -29,3 +29,14 @@ resource "google_compute_instance" "semanal_homol" {
 
   tags = ["ssh-conexao", "server"]
 }
+resource "google_compute_firewall" "allow_ports" {
+  name    = "allow-observabilidade"
+  network = "default"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22", "3000", "9090"]
+  }
+
+  target_tags = ["ssh-conexao", "server"]
+}

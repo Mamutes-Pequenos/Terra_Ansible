@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-
   frontend:
     image: heshambr/frontend:full
     container_name: frontend
@@ -36,11 +35,30 @@ services:
       POSTGRES_DB: greenlearning
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      # - ./db-init:/docker-entrypoint-initdb.d  # descomente se usar scripts SQL para inicializar banco
     ports:
       - "5432:5432"
     networks:
       - banco_network
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - monitoramento
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - monitoramento
     restart: unless-stopped
 
 volumes:
@@ -48,6 +66,5 @@ volumes:
 
 networks:
   banco_network:
-    driver: bridge
   front_network:
-    driver: bridge
+  monitoramento:

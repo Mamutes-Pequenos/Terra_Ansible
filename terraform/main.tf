@@ -30,7 +30,7 @@ resource "google_compute_instance" "semanal_homol" {
   tags = ["ssh-conexao", "server"]
 }
 resource "google_compute_firewall" "allow_ports" {
-  name    = "allow-observabilidade-v2"
+  name    = "allow-observabilidade-v3"
   network = "default"
 
   allow {

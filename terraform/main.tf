@@ -26,16 +26,6 @@ resource "google_compute_instance" "semanal_homol" {
   metadata = {
     ssh-keys = "ubuntu:${file(var.public_key_path)}"  
   }
-  tags = ["ssh", "grafana", "prometheus"]
-}
-resource "google_compute_firewall" "allow_ports" {
-  name    = "allow-ssh-grafana-prometheus"
-  network = "default"
 
-  allow {
-    protocol = "tcp"
-    ports    = ["22", "3000", "9090"]
-  }
-
-  target_tags = ["ssh", "grafana", "prometheus"]
+  tags = ["ssh-conexao", "server"]
 }

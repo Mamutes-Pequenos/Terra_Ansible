@@ -15,46 +15,14 @@
           - docker-compose
         state: present
 
-    - name: Clonar repositório do projeto (opcional)
+    - name: Clonar repositório do projeto
       git:
-        repo: https://github.com/Mamutes-Pequenos/Terra_Ansible
-        dest: /home/ubuntu/app
-        version: main
+        repo: "{{ repo_url }}"
+        dest: "{{ repo_dest }}"
+        version: "{{ repo_branch }}"
         force: yes
 
-    - name: Criar docker-compose.yml
-      copy:
-        dest: /home/ubuntu/app/docker-compose.yml
-        content: |
-          version: '3'
-          services:
-            prometheus:
-              image: prom/prometheus
-              ports:
-                - "9090:9090"
-              volumes:
-                - ./prometheus.yml:/etc/prometheus/prometheus.yml
-            grafana:
-              image: grafana/grafana
-              ports:
-                - "3000:3000"
-              volumes:
-                - grafana-storage:/var/lib/grafana
-          volumes:
-            grafana-storage:
-
-    - name: Criar arquivo de configuração do Prometheus
-      copy:
-        dest: /home/ubuntu/app/prometheus.yml
-        content: |
-          global:
-            scrape_interval: 15s
-          scrape_configs:
-            - job_name: 'prometheus'
-              static_configs:
-                - targets: ['localhost:9090']
-
-    - name: Subir containers
+    - name: Subir containers com Docker Compose
       shell: docker-compose up -d
       args:
         chdir: /home/ubuntu/app

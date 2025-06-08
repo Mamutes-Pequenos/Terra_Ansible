@@ -3,28 +3,39 @@ provider "google" {
   project     = var.project_id
   region      = var.region
   zone        = var.zone
+  
 }
 
-resource "google_compute_instance" "vm_instance" {
-  name         = "ci-terraform-vm"
+resource "google_compute_instance" "semanal_homol" {
+  name         = "vm01_terraform"
   machine_type = var.machine_type
   zone         = var.zone
-
+  
   boot_disk {
     initialize_params {
-      image = var.image
-      size  = var.disk_size
+      image = var.image         
+      size  = var.disk_size 
     }
   }
 
-  network_interface {
+ network_interface {
     network = "default"
-    access_config {}  # libera IP externo
+    access_config {}
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file(var.public_key_path)}"
+    ssh-keys = "ubuntu:${file(var.public_key_path)}"  
+  }
+  tags = ["ssh", "grafana", "prometheus"]
+}
+resource "google_compute_firewall" "allow_ports" {
+  name    = "allow-ssh-grafana-prometheus"
+  network = "default"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22", "3000", "9090"]
   }
 
-  tags = ["http-server", "https-server"]
+  target_tags = ["ssh", "grafana", "prometheus"]
 }

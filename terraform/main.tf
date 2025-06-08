@@ -7,7 +7,7 @@ provider "google" {
 }
 
 resource "google_compute_instance" "semanal_homol" {
-  name         = "vm01_terraform"
+  name         = "vm01-terraform"
   machine_type = var.machine_type
   zone         = var.zone
   

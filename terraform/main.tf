@@ -5,27 +5,25 @@ provider "google" {
   credentials = file(var.credentials_file_path)
 }
 
-resource "google_container_cluster" "semanal_homol" {
-  name     = "vm01_terraform"
-  machine_type = "e2-medium"
-  zone =var.zone
-  
-  boot_disk {
-    initialize_params {
-      image = var.image         
-      size  = var.disk_size 
-    }
+resource "google_container_cluster" "gke_cluster" {
+  name     = "gke-cluster-${var.env}" # pode ser prod ou stage
+  location = var.zone
+
+  initial_node_count = 1
+
+  node_config {
+    machine_type = var.machine_type
+
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
   }
 
- network_interface {
-    network = "default"
-    access_config {}
-  }
-
-  metadata = {
-    ssh-keys = "ubuntu:${file(var.public_key_path)}"  
-  }
-
-  tags = ["ssh", "app"]
+  remove_default_node_pool = false
+  enable_autorepair        = true
+  enable_autoupgrade       = true
 }
 
+output "kubernetes_endpoint" {
+  value = google_container_cluster.gke_cluster.endpoint
+}

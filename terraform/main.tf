@@ -63,7 +63,7 @@ resource "google_compute_firewall" "allow_ports" {
   target_tags = ["ssh-conexao", "server"]
 }
 
-# Output para o kubeconfig
+
 output "kubeconfig" {
-  value = google_container_cluster.semanal_homol.kube_config_raw
+  value = google_container_cluster.semanal_homol.kube_config
 }

@@ -36,6 +36,12 @@ jobs:
           terraform apply -auto-approve
         # Inicializa o Terraform e cria o cluster GKE com a configuração fornecida
 
+      - name: Save kubeconfig from Terraform output
+        run: |
+          # Salva o kubeconfig gerado pelo Terraform para usar no kubectl e Ansible
+          terraform output -raw kubeconfig > /home/runner/kubeconfig
+        # Salva o kubeconfig gerado pelo Terraform para usar no Ansible
+
       - name: Set up kubectl for GKE
         run: |
           gcloud auth activate-service-account --key-file=/home/runner/gcp_credentials/credentials.json
@@ -58,10 +64,4 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ansible sshpass
           echo "Adicionando o IP do cluster ao known_hosts..."
           ssh-keyscan -H "$CLUSTER_IP" >> ~/.ssh/known_hosts || true
-        # Instala o Ansible e adiciona a chave SSH da VM ao arquivo known_hosts
-
-      - name: Run Ansible Playbook
-        run: |
-          cd ansible
-          ansible-playbook playbook.yml -i localhost, -e kubeconfig=/home/runner/kubeconfig
-        # Executa o playbook Ansible no cluster
+        # Instala

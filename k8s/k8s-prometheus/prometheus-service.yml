@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-service
+spec:
+  selector:
+    app: prometheus
+  ports:
+    - protocol: TCP
+      port: 9090  # Porta externa para acesso
+      targetPort: 9090  # Porta do container
+  type: LoadBalancer  # Expõe o serviço externamente (se necessário)

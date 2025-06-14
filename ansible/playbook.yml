@@ -1,25 +1,20 @@
-- name: Configurar VM e subir Grafana e Prometheus
-  hosts: all
-  become: true
-
+- name: Configurar Prometheus, Grafana e Banco de Dados no Kubernetes
+  hosts: localhost  # Rodar localmente, já que o acesso ao cluster Kubernetes será configurado
   tasks:
-    - name: Atualizar pacotes
-      apt:
-        update_cache: yes
-        upgrade: yes
-
-    - name: Criar diretório /home/ubuntu/app
-      file:
-        path: /home/ubuntu/app
-        state: directory
-        mode: '0755'
-
-    - name: Copiar prometheus.yml
-      copy:
-        src: ../prometheus.yml
-        dest: /home/ubuntu/app/prometheus.yml
-
-    - name: Subir containers com Docker Compose
-      shell: docker-compose up -d
-      args:
-        chdir: /home/ubuntu/app
+    - name: Aplicar manifestos do Prometheus
+      k8s:
+        state: present
+        src: ./prometheus-deployment.yml  # Caminho para o manifesto do Prometheus
+        kubeconfig: "/home/runner/kubeconfig"  # Caminho para o kubeconfig gerado pelo Terraform
+    
+    - name: Aplicar manifestos do Grafana
+      k8s:
+        state: present
+        src: ./grafana-deployment.yml  # Caminho para o manifesto do Grafana
+        kubeconfig: "/home/runner/kubeconfig"
+    
+    - name: Aplicar manifestos do Banco de Dados
+      k8s:
+        state: present
+        src: ./database-deployment.yml  # Caminho para o manifesto do Banco de Dados
+        kubeconfig: "/home/runner/kubeconfig"

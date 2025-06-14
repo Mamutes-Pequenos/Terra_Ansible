@@ -1,4 +1,4 @@
-output "vm_ip" {
+output "kubeconfig" {
   description = "IP externo da VM criada"
-  value       = google_compute_instance.vm_instance.network_interface[0].access_config[0].nat_ip
+  value       = google_container_cluster.semanal_homol.kube_config
 }

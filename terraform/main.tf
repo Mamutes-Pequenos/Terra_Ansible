@@ -39,7 +39,7 @@ resource "google_container_cluster" "semanal_homol" {
       machine_type = var.machine_type
       oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
     }
-    
+
   }
 
   # Configurações de rede do cluster (utilizando VPC padrão)
@@ -65,5 +65,5 @@ resource "google_compute_firewall" "allow_ports" {
 
 # Output para o kubeconfig
 output "kubeconfig" {
-  value = google_container_cluster.semanal_homol.kube_config
+  value = google_container_cluster.semanal_homol.kube_config_raw
 }

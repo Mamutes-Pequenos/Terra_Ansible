@@ -10,10 +10,9 @@ resource "google_container_cluster" "semanal_homol" {
   name     = "gke-cluster-semanal-homol"
   location = var.region
 
-  # Número inicial de nós do cluster
   initial_node_count = 3
-  
-  # Configuração dos nós do cluster
+
+  # Configuração dos nós do cluster (especificação do pool de nós)
   node_config {
     machine_type = var.machine_type
     oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
@@ -22,27 +21,27 @@ resource "google_container_cluster" "semanal_homol" {
       ssh-keys = "ubuntu:${file(var.public_key_path)}"
     }
 
-    # Definir a imagem base para as instâncias do GKE
     image_type = "COS"  # Container-Optimized OS
   }
 
-  # Habilitando o autoscaling
-  enable_autoscaling = true
-  min_node_count     = 1
-  max_node_count     = 5
+  # Habilita o autoscaling do node pool, configurado no node pool, não no cluster
+  node_pool {
+    name       = "default-pool"
+    node_count = 3
+    min_count  = 1
+    max_count  = 5
 
-  # Rede do cluster
+    node_config {
+      machine_type = var.machine_type
+      oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+    }
+  }
+
+  # Configurações de rede do cluster (utilizando VPC padrão)
   network    = "default"
   subnetwork = "default"
 
-  # Permissões para os nós
-  master_auth {
-    username = "admin"
-    password = "password"
-  }
-
-  # Habilita o balanceamento de carga do Kubernetes
-  enable_network_policy = true
+  # Removendo o master_auth (não é mais necessário para autenticação)
 }
 
 # Configuração do firewall para permitir o acesso aos serviços do cluster

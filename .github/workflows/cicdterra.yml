@@ -20,12 +20,22 @@ jobs:
           chmod 600 /home/runner/gcp_credentials/credentials.json
         # Cria pasta e grava o arquivo de credenciais GCP decodificado com permissão restrita
 
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false  # Garantir que o terraform seja instalado corretamente
+        # Instala o Terraform no runner
+
+      - name: Verify Terraform installation
+        run: terraform --version
+        # Verifica se o Terraform foi instalado corretamente
+
       - name: Set up GKE Cluster with Terraform
         run: |
           cd terraform
           terraform init
           terraform apply -auto-approve
-        # Inicializa o Terraform, cria o cluster GKE e outros recursos no Google Cloud
+        # Inicializa o Terraform e cria o cluster GKE com a configuração fornecida
 
       - name: Set up kubectl for GKE
         run: |

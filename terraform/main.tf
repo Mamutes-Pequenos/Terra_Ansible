@@ -28,25 +28,24 @@ resource "google_container_cluster" "semanal_homol" {
   node_pool {
     name       = "default-pool"
     node_count = 3
-    min_count  = 1
-    max_count  = 5
+
+    # Configuração do autoscaling do node pool
+    autoscaling {
+      min_node_count = 1
+      max_node_count = 5
+    }
 
     node_config {
       machine_type = var.machine_type
       oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
     }
-
-    # Habilita o autoscaling do node pool
-    autoscaling {
-      min_node_count = 1
-      max_node_count = 5
-    }
+    
   }
 
   # Configurações de rede do cluster (utilizando VPC padrão)
   network    = "default"
   subnetwork = "default"
-  
+
 }
 
 # Configuração do firewall para permitir o acesso aos serviços do cluster

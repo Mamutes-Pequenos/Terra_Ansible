@@ -24,7 +24,7 @@ resource "google_container_cluster" "semanal_homol" {
     image_type = "COS"  # Container-Optimized OS
   }
 
-  # Habilita o autoscaling do node pool, configurado no node pool, não no cluster
+  # Pool de nós com autoescalonamento configurado
   node_pool {
     name       = "default-pool"
     node_count = 3
@@ -35,13 +35,18 @@ resource "google_container_cluster" "semanal_homol" {
       machine_type = var.machine_type
       oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
     }
+
+    # Habilita o autoscaling do node pool
+    autoscaling {
+      min_node_count = 1
+      max_node_count = 5
+    }
   }
 
   # Configurações de rede do cluster (utilizando VPC padrão)
   network    = "default"
   subnetwork = "default"
-
-  # Removendo o master_auth (não é mais necessário para autenticação)
+  
 }
 
 # Configuração do firewall para permitir o acesso aos serviços do cluster

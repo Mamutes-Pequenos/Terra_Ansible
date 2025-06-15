@@ -7,10 +7,9 @@ terraform {
 }
 
 provider "google" {
-  credentials = file(var.credentials_file_path)
-  project     = var.project_id
-  region      = var.region
-  zone        = var.zone
+  project = var.project_id
+  region  = var.region
+  zone    = var.zone
 }
 
 # Criando o Cluster GKE
@@ -47,7 +46,7 @@ resource "google_container_cluster" "semanal_homol" {
       machine_type = var.machine_type
       oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
     }
-    
+
   }
 
   # Configurações de rede do cluster (utilizando VPC padrão)

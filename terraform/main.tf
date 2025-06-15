@@ -1,5 +1,12 @@
+terraform {
+  required_providers {
+    google = {
+      version = "6.37"
+    }
+  }
+}
+
 provider "google" {
-  version = "6.37"  
   credentials = file(var.credentials_file_path)
   project     = var.project_id
   region      = var.region
@@ -40,13 +47,13 @@ resource "google_container_cluster" "semanal_homol" {
       machine_type = var.machine_type
       oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
     }
-
+    
   }
 
   # Configurações de rede do cluster (utilizando VPC padrão)
   network    = "default"
   subnetwork = "default"
-  
+
 }
 
 # Configuração do firewall para permitir o acesso aos serviços do cluster
@@ -64,7 +71,7 @@ resource "google_compute_firewall" "allow_ports" {
   target_tags = ["ssh-conexao", "server"]
 }
 
-# Corrigido para kubeconfig_raw
+# Ajuste para obter as credenciais via gcloud e não como atributo do recurso
 output "kubeconfig" {
-  value = google_container_cluster.semanal_homol.kubeconfig_raw
+  value = "Use 'gcloud container clusters get-credentials gke-cluster-semanal-homol --region=${var.region} --project=${var.project_id}' to configure kubectl."
 }

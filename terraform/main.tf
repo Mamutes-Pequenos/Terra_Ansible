@@ -1,4 +1,5 @@
 provider "google" {
+  version = "6.37"  
   credentials = file(var.credentials_file_path)
   project     = var.project_id
   region      = var.region
@@ -45,7 +46,7 @@ resource "google_container_cluster" "semanal_homol" {
   # Configurações de rede do cluster (utilizando VPC padrão)
   network    = "default"
   subnetwork = "default"
-
+  
 }
 
 # Configuração do firewall para permitir o acesso aos serviços do cluster
@@ -63,7 +64,7 @@ resource "google_compute_firewall" "allow_ports" {
   target_tags = ["ssh-conexao", "server"]
 }
 
-
+# Corrigido para kubeconfig_raw
 output "kubeconfig" {
-  value = google_container_cluster.semanal_homol.kube_config
+  value = google_container_cluster.semanal_homol.kubeconfig_raw
 }

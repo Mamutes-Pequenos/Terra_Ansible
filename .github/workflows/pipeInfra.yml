@@ -31,10 +31,19 @@ jobs:
           terraform apply -auto-approve
         # O terraform.tfvars será lido automaticamente
 
+      - name: Set cluster name dynamically
+        id: set-cluster
+        run: |
+          if [ "${GITHUB_REF##*/}" = "main" ]; then
+            echo "cluster_name=gke-cluster-prod" >> $GITHUB_ENV
+          else
+            echo "cluster_name=gke-cluster-homol" >> $GITHUB_ENV
+          fi    
+
       - name: Authenticate gcloud
         run: |
           gcloud auth activate-service-account --key-file=/home/runner/gcp_credentials/credentials.json
-          gcloud container clusters get-credentials gke-cluster-homol --zone=us-east1-b --project=${{ secrets.GCP_PROJECT_ID }}
+          gcloud container clusters get-credentials ${{ env.cluster_name }} --zone=us-east1-b --project=${{ secrets.GCP_PROJECT_ID }}
 
       - name: Instalar Google Cloud SDK com gke-gcloud-auth-plugin
         run: |

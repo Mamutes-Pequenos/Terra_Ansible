@@ -46,14 +46,6 @@ jobs:
             echo "::set-output name=node_pool::gke-cluster-homol"
           fi  
 
-      - name: Resize node pool
-        run: |
-          gcloud auth activate-service-account --key-file=/home/runner/gcp_credentials/credentials.json
-          gcloud container clusters resize ${{ steps.set-cluster.outputs.cluster_name }} \
-            --node-pool=${{ steps.set-cluster.outputs.node_pool }} \
-            --num-nodes=2 \
-            --zone=us-east1-b --quiet
-
   deploy:
     runs-on: ubuntu-latest
     needs: infra

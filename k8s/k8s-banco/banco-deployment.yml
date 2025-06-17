@@ -20,10 +20,10 @@ spec:
         image: postgres:15
         env:
         - name: POSTGRES_USER
-          value: "admin"
-        - name: POSTGRES_PASSWORD
           value: "postgres"
-        - name: POSTGRES_DB
+        - name: POSTGRES_PASSWORD
           value: "1010"
+        - name: POSTGRES_DB
+          value: "greenLearning"  ## KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK EU CRIEI COMO O BANCO SE CHAMANDO 1010
         ports:
         - containerPort: 5432

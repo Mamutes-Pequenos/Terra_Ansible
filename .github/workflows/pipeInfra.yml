@@ -108,7 +108,7 @@ jobs:
 
       - name: Wait for NGINX Ingress Controller Ready
         run: |
-          kubectl rollout status deployment ingress-nginx-controller -n ingress-nginx --timeout=300s || echo "Timeout no rollout, mas vamos seguir..."
+          kubectl rollout status deployment ingress-nginx-controller -n ingress-nginx --timeout=240s || echo "Timeout no rollout, mas vamos seguir..."
 
       - name: Apply Ingress Rules
         run: |

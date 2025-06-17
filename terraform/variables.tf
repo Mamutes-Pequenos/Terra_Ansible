@@ -31,7 +31,7 @@ variable "network" {
 variable "node_count" {
   description = "Número de nós no node pool"
   type        = number
-  default     = 1
+  default     = 2
 }
 
 variable "machine_type" {

@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: banco
+  namespace: db-namespace
   labels:
     app: banco
 spec:

@@ -1,4 +1,4 @@
-project_id = "corded-racer-455623-i7 "
+project_id = "corded-racer-455623-i7"
 region = "us-east1"
 cluster_name = "gke-cluster-homol"
 network = "default"

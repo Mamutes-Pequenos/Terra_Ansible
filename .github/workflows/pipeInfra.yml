@@ -34,7 +34,7 @@ jobs:
       - name: Authenticate gcloud
         run: |
           gcloud auth activate-service-account --key-file=/home/runner/gcp_credentials/credentials.json
-          gcloud container clusters get-credentials gke-cluster-semanal-homol --region=${{ secrets.GCP_REGION }} --project=${{ secrets.GCP_PROJECT_ID }}
+          gcloud container clusters get-credentials gke-cluster-homol --zone=us-east1-b --project=${{ secrets.GCP_PROJECT_ID }}
 
       - name: Check kubectl client version
         run: kubectl version --client

@@ -3,7 +3,7 @@ name: CI/CD Pipeline for Terraform and Kubernetes
 on:
   push:
     branches:
-      - developer3  # Executa apenas na branch developer3
+      - developer4  # Executa apenas na branch developer3
 
 jobs:
   deploy:

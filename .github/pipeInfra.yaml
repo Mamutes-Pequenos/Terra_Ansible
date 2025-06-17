@@ -1,0 +1,54 @@
+name: CI/CD Pipeline for Terraform and Kubernetes
+
+on:
+  push:
+    branches:
+      - developer3  # Executa apenas na branch developer3
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up GCP credentials (from base64)
+        run: |
+          mkdir -p /home/runner/gcp_credentials
+          echo "${{ secrets.GCP_CREDENTIALS_BASE64 }}" | base64 -d > /home/runner/gcp_credentials/credentials.json
+          chmod 600 /home/runner/gcp_credentials/credentials.json
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init & Apply
+        run: |
+          cd terraform
+          terraform init
+          terraform apply -auto-approve
+        # O terraform.tfvars será lido automaticamente
+
+      - name: Authenticate gcloud
+        run: |
+          gcloud auth activate-service-account --key-file=/home/runner/gcp_credentials/credentials.json
+          gcloud container clusters get-credentials gke-cluster-semanal-homol --region=${{ secrets.GCP_REGION }} --project=${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Check kubectl client version
+        run: kubectl version --client
+
+      - name: Deploy to Kubernetes cluster
+        run: |
+          kubectl apply -f k8s/k8s-prometheus/prometheus-deployment.yml
+          kubectl apply -f k8s/k8s-prometheus/prometheus-service.yml
+          kubectl apply -f k8s/k8s-grafana/grafana-deployment.yml
+          kubectl apply -f k8s/k8s-grafana/grafana-service.yml
+          kubectl apply -f k8s/k8s-banco/banco-deployment.yml
+          kubectl apply -f k8s/k8s-banco/banco-service.yml
+
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ansible sshpass

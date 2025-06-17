@@ -11,8 +11,8 @@ resource "google_container_cluster" "gke_cluster" {
 }
 
 resource "google_container_node_pool" "primary_nodes" {
-  name       = "primary-node-pool"
-  location   = var.region
+  name       = var.cluster_name
+  location   = var.zone
   cluster    = google_container_cluster.gke_cluster.name
   node_count = var.node_count
 

@@ -33,7 +33,7 @@ variable "machine_type" {
   default     = "e2-medium"
 }
 
-variable "credentials_file_path" {
-  description = "Caminho do arquivo de credenciais do GCP"
+variable "gcp_credentials_path" {
+  description = "Path to GCP service account credentials file"
   type        = string
 }

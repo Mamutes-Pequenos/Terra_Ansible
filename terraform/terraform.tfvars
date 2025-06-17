@@ -4,4 +4,4 @@ cluster_name = "gke-cluster-homol"
 network = "default"
 node_count = 1
 machine_type = "e2-medium"
-credentials_file_path = "/home/runner/gcp_credentials/credentials.json"
+gcp_credentials_path = "/home/runner/gcp_credentials/credentials.json"

@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   name: prometheus
   namespace: observabilidade
-  labels:
-    app: prometheus
 spec:
   replicas: 1
   selector:
@@ -16,14 +14,18 @@ spec:
         app: prometheus
     spec:
       containers:
-      - name: prometheus
-        image: prom/prometheus:latest
-        ports:
-        - containerPort: 9090
-        resources:
-          requests:
-            cpu: "100m"
-            memory: "128Mi"
-          limits:
-            cpu: "250m"
-            memory: "256Mi"
+        - name: prometheus
+          image: prom/prometheus:latest
+          args:
+            - --config.file=/etc/prometheus/prometheus.yml
+            - --storage.tsdb.path=/prometheus
+            - --web.external-url=/prometheus
+          ports:
+            - containerPort: 9090
+          resources:
+            requests:
+              cpu: 48m
+              memory: 54Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi

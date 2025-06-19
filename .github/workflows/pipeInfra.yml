@@ -72,6 +72,13 @@ jobs:
           install_components: 'kubectl,gke-gcloud-auth-plugin'
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
+
+      ## RODA O TERRAFORM PARA CRIAR O CLUSTER
+      - name: Terraform Apply
+        run: |
+          cd terraform
+          terraform apply -auto-approve
+
       ## OBTÉM AS CREDENCIAIS DO CLUSTER
       - name: Get GKE credentials
         uses: google-github-actions/get-gke-credentials@v1
@@ -79,12 +86,6 @@ jobs:
           cluster_name: gke-cluster-homol
           location: us-east1
           project_id: ${{ secrets.GCP_PROJECT_ID }}
-
-      ## RODA O TERRAFORM PARA CRIAR O CLUSTER
-      - name: Terraform Apply
-        run: |
-          cd terraform
-          terraform apply -auto-approve
 
       ## ESPERA O CLUSTER SER CRIADO
       - name: Wait for cluster creation

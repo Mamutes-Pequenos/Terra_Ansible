@@ -4,4 +4,5 @@ cluster_name = "gke-cluster-homol"
 network = "default"
 node_count = 2
 machine_type = "e2-medium"
+grafana_admin_password = "deuscaralho"
 gcp_credentials_path = "/home/runner/gcp_credentials/credentials.json"

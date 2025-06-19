@@ -83,40 +83,12 @@ jobs:
 
       - name: Apply Namespaces
         run: |
-          kubectl apply -f k8s/k8s-observabilidade/observabilidade-namespace.yml
           kubectl apply -f k8s/k8s-banco/db-namespace.yml
       
-      - name: Apply NGINX Ingress RBAC
-        run: |
-          kubectl apply -f k8s/k8s-ingress-nginx/rbac.yaml    
-
-      - name: Apply Prometheus ConfigMap
-        run: |
-          kubectl apply -f k8s/k8s-prometheus/prometheus-config.yml
-
       - name: Apply Deployments
         run: |
-          kubectl apply -f k8s/k8s-prometheus/prometheus-deployment.yml
-          kubectl apply -f k8s/k8s-grafana/grafana-deployment.yml
           kubectl apply -f k8s/k8s-banco/banco-deployment.yml
           kubectl apply -f k8s/k8s-banco/banco-service.yml
-
-      - name: Apply ClusterIP Services
-        run: |
-          kubectl apply -f k8s/k8s-prometheus/prometheus-service.yml
-          kubectl apply -f k8s/k8s-grafana/grafana-service.yml
-
-      - name: Deploy NGINX Ingress Controller
-        run: |
-          kubectl apply -f k8s/k8s-ingress-nginx/deploy.yml
-
-      - name: Wait for NGINX Ingress Controller Ready
-        run: |
-          kubectl rollout status deployment ingress-nginx-controller -n ingress-nginx --timeout=240s || echo "Timeout no rollout, mas vamos seguir..."
-
-      - name: Apply Ingress Rules
-        run: |
-          kubectl apply -f k8s/k8s-observabilidade/observabilidade-ingress.yml
 
   verify:
     runs-on: ubuntu-latest
@@ -157,12 +129,3 @@ jobs:
           gcloud container clusters get-credentials ${{ env.cluster_name }} \
             --zone=us-east1-b --project=${{ secrets.GCP_PROJECT_ID }}
 
-      - name: Verify Ingress + SVC
-        run: |
-          kubectl get ingress -n observabilidade
-          kubectl get svc -n ingress-nginx
-
-      - name: Install Ansible
-        run: |
-          sudo apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ansible sshpass

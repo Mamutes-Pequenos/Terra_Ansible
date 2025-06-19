@@ -18,7 +18,30 @@ resource "google_container_node_pool" "primary_nodes" {
 
   node_config {
     machine_type = var.machine_type
-    disk_size_gb = 20
+    disk_size_gb = 30
     disk_type    = "pd-standard"
   }
+}
+
+resource "helm_release" "stack-prometheus" {
+    name       = "stack-prometheus"
+    repository = "https://prometheus-community.github.io/helm-charts"
+    chart      = "kube-prometheus-stack"
+
+    namespace        = "monitoramento"
+    create_namespace = true
+
+    values = [
+        yamlencode({
+            grafana = {
+                adminUser = "admin"
+                
+                adminPassword = var.grafana_admin_password
+                
+                service = {
+                    type = "LoadBalancer"
+                }
+            }
+        })
+    ]
 }

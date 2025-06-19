@@ -40,6 +40,11 @@ variable "machine_type" {
   default     = "e2-medium"
 }
 
+variable "grafana_admin_password" {
+  description = "Senha grafana Admin"
+  type        = string
+}
+
 variable "gcp_credentials_path" {
   description = "Path to GCP service account credentials file"
   type        = string

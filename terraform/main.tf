@@ -1,10 +1,8 @@
 resource "google_container_cluster" "gke_cluster" {
   name     = var.cluster_name
   location = var.zone
-
   remove_default_node_pool = true
   initial_node_count       = 2
-
   network    = var.network
 
   ip_allocation_policy {}
@@ -23,7 +21,15 @@ resource "google_container_node_pool" "primary_nodes" {
   }
 }
 
-resource "helm_release" "stack-prometheus" {
+resource "null_resource" "configure_kubectl" {
+  provisioner "local-exec" {
+    command = "gcloud container clusters get-credentials ${google_container_cluster.gke_cluster.name} --region ${var.zone} --project ${var.project_id}"
+  }
+
+  depends_on = [google_container_cluster.gke_cluster, google_container_node_pool.primary_nodes]
+}
+
+resource "helm_release" "prometheus_stack" {
     name       = "stack-prometheus"
     repository = "https://prometheus-community.github.io/helm-charts"
     chart      = "kube-prometheus-stack"

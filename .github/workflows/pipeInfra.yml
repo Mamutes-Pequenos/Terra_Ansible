@@ -30,7 +30,7 @@ jobs:
             echo "cluster_name=gke-cluster-homol" >> $GITHUB_ENV
           fi  
 
-      ## BAIXA A PORRA DO PLUGIN
+      ## BAIXA O PLUGIN DO GCP
       - name: Install Google Cloud SDK + kubectl + auth plugin
         run: |
           sudo apt-get update
@@ -43,12 +43,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y google-cloud-sdk kubectl google-cloud-sdk-gke-gcloud-auth-plugin
 
-    
+      ## AUTENTICA O GCP
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS_BASE64 }}
+
+      ## SETUP DO TERRAFORM
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_wrapper: false
 
+      ## INICIALIZA O TERRAFORM E CRIA O CLUSTER
       - name: Initialize Terraform
         run: |
           cd terraform
@@ -57,11 +64,7 @@ jobs:
             -backend-config="prefix=terraform/state" \
             -backend-config="credentials=/home/runner/gcp_credentials/credentials.json"
 
-      - name: Authenticate to GCP
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_CREDENTIALS_BASE64 }}
-
+      ## CONFIGURA O GKE
       - name: Configure GKE access
         uses: google-github-actions/setup-gcloud@v2
         with:
@@ -69,6 +72,7 @@ jobs:
           install_components: 'kubectl,gke-gcloud-auth-plugin'
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
+      ## OBTÉM AS CREDENCIAIS DO CLUSTER
       - name: Get GKE credentials
         uses: google-github-actions/get-gke-credentials@v1
         with:
@@ -76,12 +80,18 @@ jobs:
           location: us-east1
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
+      ## RODA O TERRAFORM PARA CRIAR O CLUSTER
       - name: Terraform Apply
         run: |
           cd terraform
           terraform apply -auto-approve
 
-      ## APÓS CRIAR O CLUSTER, CONFIGURA O KUBECTL
+      ## ESPERA O CLUSTER SER CRIADO
+      - name: Wait for cluster creation
+        run: |
+          sleep 60  # Aguarda 60 segundos para o cluster ser provisionado
+
+      ## CONFIGURA O KUBECTL E HELM
       - name: Set up kubectl and Helm
         run: |
           gcloud auth activate-service-account --key-file=/home/runner/gcp_credentials/credentials.json

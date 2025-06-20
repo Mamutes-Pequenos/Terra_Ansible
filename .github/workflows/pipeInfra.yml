@@ -57,6 +57,7 @@ jobs:
 
       - name: Terraform Plan
         run: |
+          terraform workspace select staging || terraform workspace new staging
           terraform plan -var-file="terraform.tfvars" -out=planfile
 
       ## RODA O TERRAFORM PARA CRIAR O CLUSTER

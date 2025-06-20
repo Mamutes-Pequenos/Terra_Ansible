@@ -58,7 +58,15 @@ jobs:
       - name: Terraform Plan
         run: |
           terraform workspace select staging || terraform workspace new staging
-          terraform plan -var-file="terraform/terraform.tfvars" -out=planfile
+          terraform plan -out=planfile \
+                -var "project_id=$[{ secrets.GCP_PROJECT_ID }]" \
+                -var "region=us-east1" \
+                -var "cluster_name=gke-cluster-homol" \
+                -var "network=default" \
+                -var "node_count=2" \
+                -var "machine_type=e2-medium" \
+                -var "grafana_admin_password=deuscaralho" \
+                -var "gcp_credentials_path=/home/runner/gcp_credentials/credentials.json"
 
       ## RODA O TERRAFORM PARA CRIAR O CLUSTER
       - name: Terraform Apply

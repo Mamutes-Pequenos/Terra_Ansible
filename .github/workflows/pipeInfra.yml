@@ -71,6 +71,13 @@ jobs:
           install_components: 'kubectl,gke-gcloud-auth-plugin'
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
+      ## OBTÉM AS CREDENCIAIS DO CLUSTER
+      - name: Get GKE credentials
+        uses: google-github-actions/get-gke-credentials@v1
+        with:
+          cluster_name: gke-cluster-homol
+          location: us-east1
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       ## RODA O TERRAFORM PARA CRIAR O CLUSTER
       - name: Terraform Apply

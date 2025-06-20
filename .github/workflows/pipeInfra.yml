@@ -44,7 +44,7 @@ jobs:
             -backend-config="bucket=gke-terra-infra" \
             -backend-config="prefix=terraform/state" \
             -backend-config="credentials=/home/runner/gcp_credentials/credentials.json"
-
+      ## teste 15
       ## AUTENTICA O GCP
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v2

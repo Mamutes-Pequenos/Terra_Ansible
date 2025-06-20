@@ -17,10 +17,3 @@ output "kubeconfig_command" {
   description = "Comando para obter credenciais do cluster"
   value = "gcloud container clusters get-credentials ${google_container_cluster.gke_cluster.name} --region ${google_container_cluster.gke_cluster.location} --project ${var.project_id}"
 }
-
-# Expõe o certificado de autoridade para conexão segura
-output "ca_certificate" {
-  description = "Certificado de autoridade do cluster GKE (codificado em base64)."
-  value       = google_container_cluster.primary.master_auth[0].cluster_ca_certificate
-  sensitive   = true
-}

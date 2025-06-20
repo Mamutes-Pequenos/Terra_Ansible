@@ -60,8 +60,8 @@ jobs:
         run: |
           cd terraform
           terraform init \
-            -backend-config="bucket=gke-cluster-homol" \
-            -backend-config="prefix=gke/homol" \
+            -backend-config="bucket=estado-state" \
+            -backend-config="prefix=terraform/state" \
 
       ## CONFIGURA O GKE
       - name: Configure GKE access

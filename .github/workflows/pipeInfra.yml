@@ -79,7 +79,7 @@ jobs:
       #           -var "node_count=2" 
       #           -var "machine_type=e2-medium" \
       #           -var "grafana_admin_password=deuscaralho"
-      #           -var "credentials_file_path=/home/runner/gcp_credentials/credentials.json" \
+      #           -var "gcp_credentials_path=/home/runner/gcp_credentials/credentials.json" \
 
       - name: Terraform Plan
         run: |
@@ -93,7 +93,7 @@ jobs:
                 -var "node_count=2" 
                 -var "machine_type=e2-medium" \
                 -var "grafana_admin_password=deuscaralho"
-                -var "credentials_file_path=/home/runner/gcp_credentials/credentials.json" \
+                -var "gcp_credentials_path=/home/runner/gcp_credentials/credentials.json" \
 
       ## RODA O TERRAFORM PARA CRIAR O CLUSTER
       - name: Terraform Apply

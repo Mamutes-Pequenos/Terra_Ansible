@@ -12,7 +12,7 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up GCP credentials (from base64)
         run: |
@@ -30,6 +30,19 @@ jobs:
             echo "cluster_name=gke-cluster-homol" >> $GITHUB_ENV
           fi  
 
+      ## AUTENTICA O GCP
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS_BASE64 }}
+
+      - name: Verificar Autenticação GCP
+        run: |
+          echo "Verifica identidade"
+          gcloud auth list
+          echo "verifica projeto"
+          gcloud config list
+
       ## SETUP DO TERRAFORM
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
@@ -39,44 +52,16 @@ jobs:
       ## INICIALIZA O TERRAFORM E CRIA O CLUSTER
       - name: Initialize Terraform
         run: |
-          cd terraform
-          terraform init \
-            -backend-config="bucket=gke-terra-infra" \
-            -backend-config="prefix=terraform/state" \
-            -backend-config="credentials=/home/runner/gcp_credentials/credentials.json"
+          terraform init -backend-config=pipe.tfbackend
       ## teste 15
-      ## AUTENTICA O GCP
-      - name: Authenticate to GCP
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_CREDENTIALS_BASE64 }}
-
-      ## CONFIGURA O GKE
-      - name: Configure GKE access
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          version: '>= 416.0.0'
-          install_components: 'kubectl,gke-gcloud-auth-plugin'
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Terraform Plan
         run: |
-          cd terraform
-          terraform plan -out=planfile \
-                -var "project_id=${{ secrets.GCP_PROJECT_ID }}" \
-                -var "region=us-east1" \
-                -var "zone=us-us-east1-b" \
-                -var "cluster_name=gke-cluster-homol"
-                -var "network=default"
-                -var "node_count=2" 
-                -var "machine_type=e2-medium" \
-                -var "grafana_admin_password=deuscaralho"
-                -var "gcp_credentials_path=/home/runner/gcp_credentials/credentials.json" \
+          terraform plan -var-file="terraform.tfvars" -out=planfile
 
       ## RODA O TERRAFORM PARA CRIAR O CLUSTER
       - name: Terraform Apply
         run: |
-          cd terraform
           terraform apply -auto-approve planfile
 
 
@@ -87,70 +72,6 @@ jobs:
           cluster_name: gke-cluster-homol
           location: us-east1
           project_id: ${{ secrets.GCP_PROJECT_ID }}
-
-      # - name: Terraform Plan
-      #   run: |
-      #     cd terraform
-      #     terraform destroy -auto-approve \
-      #           -var "project_id={{ secrets.GCP_PROJECT_ID }}" \
-      #           -var "region=us-east1" \
-      #           -var "zone=us-us-east1-b" \
-      #           -var "cluster_name=gke-cluster-homol"
-      #           -var "network=default"
-      #           -var "node_count=2" 
-      #           -var "machine_type=e2-medium" \
-      #           -var "grafana_admin_password=deuscaralho"
-      #           -var "gcp_credentials_path=/home/runner/gcp_credentials/credentials.json" \
-
-
-
-      - name: Extract Cluster Name
-        run: |
-          cd terraform
-          CLUSTER_NAME=$(terraform output -raw cluster_name | tr -d '\r')
-          echo "CLUSTER_NAME=$CLUSTER_NAME" >> $GITHUB_ENV
-
-      - name: Configure kubectl manually (secure & plugin-free)
-        run: |
-          gcloud auth activate-service-account --key-file=/home/runner/gcp_credentials/credentials.json
-          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
-
-          ACCESS_TOKEN=$(gcloud auth print-access-token)
-          CLUSTER_ENDPOINT=$(gcloud container clusters describe $CLUSTER_NAME \
-            --region us-east1 \
-            --format="value(endpoint)")
-
-          CLUSTER_CA=$(gcloud container clusters describe $CLUSTER_NAME \
-            --region us-east1 \
-            --format="value(masterAuth.clusterCaCertificate)")
-
-          echo "$CLUSTER_CA" | base64 -d > /tmp/ca.crt
-
-          kubectl config set-cluster gke-cluster \
-            --server=https://$CLUSTER_ENDPOINT \
-            --certificate-authority=/tmp/ca.crt
-
-          kubectl config set-credentials gke-user --token=$ACCESS_TOKEN
-          kubectl config set-context gke-context \
-            --cluster=gke-cluster --user=gke-user
-          kubectl config use-context gke-context 
-
-
-      ## CONFIGURA O KUBECTL E HELM
-      - name: Set up kubectl and Helm
-        run: |
-          gcloud auth activate-service-account --key-file=/home/runner/gcp_credentials/credentials.json
-          gcloud container clusters get-credentials ${{ env.cluster_name }} \
-            --zone=us-east1-b --project=${{ secrets.GCP_PROJECT_ID }}
-
-      ## INSTALA O HELM PARA O PROMETHEUS
-      - name: Install Helm and Deploy Prometheus
-        run: |
-          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-          helm repo update
-          helm install prometheus-stack prometheus-community/kube-prometheus-stack \
-            --namespace monitoramento --create-namespace \
-            --set grafana.adminPassword=${{ secrets.GRAFANA_ADMIN_PASSWORD }}
 
   deploy:
     runs-on: ubuntu-latest

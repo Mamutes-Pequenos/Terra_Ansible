@@ -1,0 +1,2 @@
+bucket = "gke-terra-infra"
+prefix = "terraform/state"

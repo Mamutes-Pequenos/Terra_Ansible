@@ -2,12 +2,6 @@ terraform {
   backend "gcs" {}
 }
 
-# Configura o provedor do Google Cloud com as variáveis de entrada
-provider "google" {
-  project = var.project_id
-  region  = var.region
-}
-
 resource "google_container_cluster" "gke_cluster" {
   name     = var.cluster_name
   location = var.zone

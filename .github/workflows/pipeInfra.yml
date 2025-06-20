@@ -59,7 +59,9 @@ jobs:
       - name: Initialize Terraform
         run: |
           cd terraform
-          terraform init
+          terraform init \
+            -backend-config="bucket=gke-terra-infra" \
+            -backend-config="prefix=terraform/state" \
 
       ## CONFIGURA O GKE
       - name: Configure GKE access

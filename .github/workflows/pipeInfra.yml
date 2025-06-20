@@ -52,6 +52,7 @@ jobs:
       ## INICIALIZA O TERRAFORM E CRIA O CLUSTER
       - name: Initialize Terraform
         run: |
+          cd terraform
           terraform init -backend-config=pipe.tfbackend
       ## teste 15
 
@@ -64,6 +65,7 @@ jobs:
       ## RODA O TERRAFORM PARA CRIAR O CLUSTER
       - name: Terraform Apply
         run: |
+          cd terraform
           terraform apply -auto-approve planfile
 
 

@@ -2,26 +2,36 @@ terraform {
   backend "gcs" {}
 }
 
-resource "google_container_cluster" "gke_cluster" {
-  name     = var.cluster_name
-  location = var.zone
-  remove_default_node_pool = true
-  initial_node_count       = 2
-  network    = var.network
-
-  ip_allocation_policy {}
+provider "google" {
+  project = var.project_id
+  region  = var.region
+  zone    = var.zone
+  credentials = file(var.credentials_file_path)
 }
 
-resource "google_container_node_pool" "primary_nodes" {
-  name       = var.cluster_name
-  location   = var.zone
-  cluster    = google_container_cluster.gke_cluster.name
-  node_count = var.node_count
+provider "helm" {
+  kubernetes {
+    host                   = google_container_cluster.primary.endpoint
+    token                  = data.google_client_config.default.access_token
+    cluster_ca_certificate = base64decode(google_container_cluster.primary.master_auth[0].cluster_ca_certificate)
+  }
+}
+
+resource "google_container_cluster" "primary" {
+  name     = var.cluster_name
+  location = var.region
+
+  deletion_protection = false
+  initial_node_count = var.cluster_size
 
   node_config {
     machine_type = var.machine_type
-    disk_size_gb = 30
-    disk_type    = "pd-standard"
+    disk_type = "pd-standard"
+    disk_size_gb = 50
+
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform",
+    ]
   }
 }
 
@@ -34,17 +44,20 @@ resource "helm_release" "prometheus_stack" {
     namespace        = "monitoramento"
     create_namespace = true
 
-    values = [
-        yamlencode({
-            grafana = {
-                adminUser = "admin"
-                
-                adminPassword = var.grafana_admin_password
-                
-                service = {
-                    type = "LoadBalancer"
-                }
-            }
-        })
-    ]
+   set {
+    name  = "grafana.adminPassword"
+    value = "deuscaralho"
+  }
+
+  set {
+    name  = "grafana.service.type"
+    value = "LoadBalancer"
+  }
+
+  set {
+    name  = "prometheus.service.type"
+    value = "ClusterIP"
+  }
+
+  depends_on = [google_container_cluster.primary]
 }

@@ -59,7 +59,7 @@ jobs:
         run: |
           terraform workspace select staging || terraform workspace new staging
           terraform plan -out=planfile \
-                -var "project_id=$[{ secrets.GCP_PROJECT_ID }]" \
+                -var "project_id=${{ secrets.GCP_PROJECT_ID }}" \
                 -var "region=us-east1" \
                 -var "cluster_name=gke-cluster-homol" \
                 -var "network=default" \

@@ -14,7 +14,7 @@ module "gke_cluster" {
   project_id   = var.project_id
   cluster_name = var.cluster_name
   region       = var.region
-  zone         = var.gke_zone
+  zone         = var.zone
 }
 
 module "kubernetes_config" {

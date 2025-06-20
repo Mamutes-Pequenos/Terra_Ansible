@@ -1,5 +1,6 @@
 project_id = "corded-racer-455623-i7"
 region = "us-east1"
+zone = "us-east1-b"
 cluster_name = "gke-cluster-homol"
 network = "default"
 node_count = 2

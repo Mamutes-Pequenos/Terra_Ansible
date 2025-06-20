@@ -49,6 +49,14 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS_BASE64 }}
 
+      - name: Verificar Autenticação GCP
+        run: |
+          echo "verifica identidade"
+          gcloud auth list
+          echo "veifica projeto
+          gcloud config list
+
+          
       ## SETUP DO TERRAFORM
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
@@ -60,9 +68,8 @@ jobs:
         run: |
           cd terraform
           terraform init \
-            -backend-config="bucket=estado-state" \
-            -backend-config="prefix=terraform/state" \
-            -backend-config="credentials=/home/runner/gcp_credentials/credentials.json"
+            -backend-config="bucket=gke-cluster-homol" \
+            -backend-config="prefix=gke/homol" \
 
       ## CONFIGURA O GKE
       - name: Configure GKE access

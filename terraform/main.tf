@@ -1,9 +1,11 @@
-provider "helm" {
-  kubernetes {
-    host                   = google_container_cluster.primary.endpoint
-    token                  = data.google_client_config.default.access_token
-    cluster_ca_certificate = base64decode(google_container_cluster.primary.master_auth[0].cluster_ca_certificate)
-  }
+terraform {
+  backend "gcs" {}
+}
+
+# Configura o provedor do Google Cloud com as variáveis de entrada
+provider "google" {
+  project = var.project_id
+  region  = var.region
 }
 
 resource "google_container_cluster" "gke_cluster" {
@@ -29,14 +31,6 @@ resource "google_container_node_pool" "primary_nodes" {
   }
 }
 
-resource "null_resource" "configure_kubectl" {
-  provisioner "local-exec" {
-    command = "gcloud container clusters get-credentials ${google_container_cluster.gke_cluster.name} --region ${var.zone} --project ${var.project_id}"
-  }
-
-  depends_on = [google_container_cluster.gke_cluster, google_container_node_pool.primary_nodes]
-}
-
 resource "helm_release" "prometheus_stack" {
     name       = "stack-prometheus"
     repository = "https://prometheus-community.github.io/helm-charts"
@@ -59,5 +53,4 @@ resource "helm_release" "prometheus_stack" {
             }
         })
     ]
-    depends_on = [google_container_cluster.primary]
 }

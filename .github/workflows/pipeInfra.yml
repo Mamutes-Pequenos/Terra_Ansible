@@ -67,20 +67,19 @@ jobs:
           location: us-east1
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-      - name: Terraform Plan
-        run: |
-          cd terraform
-          terraform destroy -auto-approve \
-                -var "project_id=${{ secrets.GCP_PROJECT_ID }}" \
-                -var "region=us-east1" \
-                -var "zone=us-us-east1-b" \
-                -var "cluster_name=gke-cluster-homol"
-                -var "network=default"
-                -var "node_count=2" 
-                -var "machine_type=e2-medium" \
-                -var "grafana_admin_password=deuscaralho"
-                -var "credentials_file_path=/home/runner/gcp_credentials/credentials.json" \
-
+      # - name: Terraform Plan
+      #   run: |
+      #     cd terraform
+      #     terraform destroy -auto-approve \
+      #           -var "project_id={{ secrets.GCP_PROJECT_ID }}" \
+      #           -var "region=us-east1" \
+      #           -var "zone=us-us-east1-b" \
+      #           -var "cluster_name=gke-cluster-homol"
+      #           -var "network=default"
+      #           -var "node_count=2" 
+      #           -var "machine_type=e2-medium" \
+      #           -var "grafana_admin_password=deuscaralho"
+      #           -var "credentials_file_path=/home/runner/gcp_credentials/credentials.json" \
 
       - name: Terraform Plan
         run: |

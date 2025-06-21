@@ -21,6 +21,6 @@ module "kubernetes_config" {
   source = "./kube"
   project_id                 = var.project_id
   cluster_name           = module.cluster.name
-  gke_cluster_endpoint       = module.cluster.endpoint
+  cluster_endpoint       = module.cluster.endpoint
   grafana_admin_password     = var.grafana_admin_password
 }

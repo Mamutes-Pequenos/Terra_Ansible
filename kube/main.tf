@@ -25,7 +25,7 @@ resource "helm_release" "prometheus_stack" {
                 
                 service = {
                     type = "LoadBalancer"
-                    loadBalancerIP = data.google_compute_address.grafana_homol_ip.address
+                    loadBalancerIP = resource.google_compute_address.grafana_homol_ip.address
                 }
             }
         })

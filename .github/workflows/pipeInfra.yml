@@ -1,157 +1,48 @@
-name: CI/CD Pipeline for Terraform and Kubernetes
+
+name: 'infra com terraform'
 
 on:
   push:
     branches:
-      - developer4
-      - main
+      - developer6
+  workflow_dispatch:
 
 jobs:
   infra:
+    name: 'infra'
     runs-on: ubuntu-latest
     
+    permissions:
+      contents: read
+
     steps:
-      - name: Checkout repository
+      - name: Checkout do Repositório
         uses: actions/checkout@v4
 
-      - name: Set up GCP credentials (from base64)
-        run: |
-          mkdir -p /home/runner/gcp_credentials
-          echo "${{ secrets.GCP_CREDENTIALS_BASE64 }}" | base64 -d > /home/runner/gcp_credentials/credentials.json
-          chmod 600 /home/runner/gcp_credentials/credentials.json
 
-      ## MODIFICA O NOME DO CLUSTER.
-      - name: Set cluster and nodepool dynamically
-        id: set-cluster
-        run: |
-          if [ "${GITHUB_REF##*/}" = "main" ]; then
-            echo "cluster_name=gke-cluster-prod" >> $GITHUB_ENV
-          else
-            echo "cluster_name=gke-cluster-homol" >> $GITHUB_ENV
-          fi  
-
-      ## AUTENTICA O GCP
-      - name: Authenticate to GCP
+      - name: Autenticar no Google Cloud via Chave de Serviço
+        id: auth
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCP_CREDENTIALS_BASE64 }}
+
+          credentials_json: ${{ secrets.GCP_CREDENTIALS_JSON }}
 
       - name: Verificar Autenticação GCP
         run: |
-          echo "Verifica identidade"
+          echo "--- Verificando identidade autenticada ---"
           gcloud auth list
-          echo "verifica projeto"
+          echo "--- Verificando projeto configurado ---"
           gcloud config list
 
-      ## SETUP DO TERRAFORM
-      - name: Set up Terraform
+      - name: Setup do Terraform
         uses: hashicorp/setup-terraform@v3
 
-      ## INICIALIZA O TERRAFORM E CRIA O CLUSTER
-      - name: Initialize Terraform
+      - name: Executar Terraform para Staging
+        env:
+          TF_VAR_grafana_admin_password: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
         run: |
           cd terraform
-          terraform init -backend-config=pipe.tfbackend
-      ## teste sei la....
-
-      - name: Terraform Plan
-        run: |
-          cd terraform
+          terraform init -backend-config=homol.tfbackend
           terraform workspace select homol || terraform workspace new homol
-          terraform plan -var-file="terraform.tfvars" -out=planfile
-
-      ## RODA O TERRAFORM PARA CRIAR O CLUSTER
-      - name: Terraform Apply
-        run: |
-          cd terraform
-          terraform apply -auto-approve planfile
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: infra
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set up GCP credentials (from base64)
-        run: |
-          mkdir -p /home/runner/gcp_credentials
-          echo "${{ secrets.GCP_CREDENTIALS_BASE64 }}" | base64 -d > /home/runner/gcp_credentials/credentials.json
-          chmod 600 /home/runner/gcp_credentials/credentials.json
-
-      - name: Install Google Cloud SDK + kubectl + auth plugin
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y apt-transport-https ca-certificates gnupg
-          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | \
-            sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list
-          sudo mkdir -p /usr/share/keyrings
-          curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
-            sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-          sudo apt-get update
-          sudo apt-get install -y google-cloud-sdk kubectl google-cloud-sdk-gke-gcloud-auth-plugin
-
-      - name: Set cluster and nodepool dynamically
-        run: |
-          if [ "${GITHUB_REF##*/}" = "main" ]; then
-            echo "cluster_name=gke-cluster-prod" >> $GITHUB_ENV
-            echo "node_pool=gke-cluster-prod" >> $GITHUB_ENV
-          else
-            echo "cluster_name=gke-cluster-homol" >> $GITHUB_ENV
-            echo "node_pool=gke-cluster-homol" >> $GITHUB_ENV
-          fi
-
-      - name: Authenticate gcloud
-        run: |
-          gcloud auth activate-service-account --key-file=/home/runner/gcp_credentials/credentials.json
-          gcloud container clusters get-credentials ${{ env.cluster_name }} \
-            --zone=us-east1-b --project=${{ secrets.GCP_PROJECT_ID }}
-
-      - name: Apply Namespaces
-        run: |
-          kubectl apply -f k8s/k8s-banco/db-namespace.yml
-      
-      - name: Apply Deployments
-        run: |
-          kubectl apply -f k8s/k8s-banco/banco-deployment.yml
-          kubectl apply -f k8s/k8s-banco/banco-service.yml
-
-  verify:
-    runs-on: ubuntu-latest
-    needs: deploy
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set cluster and nodepool dynamically
-        run: |
-          if [ "${GITHUB_REF##*/}" = "main" ]; then
-            echo "cluster_name=gke-cluster-prod" >> $GITHUB_ENV
-          else
-            echo "cluster_name=gke-cluster-homol" >> $GITHUB_ENV
-          fi
-
-      - name: Install Google Cloud SDK + kubectl + auth plugin
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y apt-transport-https ca-certificates gnupg
-          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | \
-            sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list
-          sudo mkdir -p /usr/share/keyrings
-          curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
-            sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-          sudo apt-get update
-          sudo apt-get install -y google-cloud-sdk kubectl google-cloud-sdk-gke-gcloud-auth-plugin
-
-      - name: Set up GCP credentials (from base64)
-        run: |
-          mkdir -p /home/runner/gcp_credentials
-          echo "${{ secrets.GCP_CREDENTIALS_BASE64 }}" | base64 -d > /home/runner/gcp_credentials/credentials.json
-          chmod 600 /home/runner/gcp_credentials/credentials.json
-
-      - name: Authenticate gcloud
-        run: |
-          gcloud auth activate-service-account --key-file=/home/runner/gcp_credentials/credentials.json
-          gcloud container clusters get-credentials ${{ env.cluster_name }} \
-            --zone=us-east1-b --project=${{ secrets.GCP_PROJECT_ID }}
-
+          terraform plan -var-file="homol.tfvars" -out=tfplan
+          terraform apply -auto-approve tfplan

@@ -1,33 +1,43 @@
-variable "cluster_name" {
-  description = "Nome do cluster GKE"
-  type        = string
-  default     = "gke-cluster-semanal-homol"
-}
+# ./kubernetes/variables.tf
 
-variable "project_id" {
-  description = "ID do projeto GCP"
+variable "gke_cluster_name" {
+  description = "Nome do cluster GKE para conexão."
   type        = string
 }
 
-variable "region" {
-  description = "Região onde o cluster será criado"
-  type        = string
-  default     = "us-east1"
-}
-
-variable "zone" {
-  description = "GCP zone para o cluster zonal"
-  type        = string
-  default     = "us-east1-b"  # Ou a zona que você quer usar
-}
-
-variable "grafana_admin_password" {
-  description = "Senha grafana Admin"
-  type        = string
-}
-
-variable "cluster_endpoint" {
+variable "gke_cluster_endpoint" {
   description = "Endpoint do cluster GKE."
   type        = string
   sensitive   = true
+}
+
+variable "gke_cluster_ca_certificate" {
+  description = "Certificado de autoridade do cluster GKE."
+  type        = string
+  sensitive   = true
+}
+
+variable "grafana_admin_password" {
+  description = "Senha para o usuário 'admin' do Grafana."
+  type        = string
+  sensitive   = true
+}
+
+variable "grafana_ip" {
+  description = "Nome do endereço IP para o Grafana."
+  type        = string
+  default     = "cluster-semanal-homol"
+}
+
+variable "project_id" {
+  description = "ID do projeto GCP onde o cluster GKE está localizado."
+  type        = string
+  sensitive = true
+}
+
+variable "region" {
+  description = "Região do GCP onde o cluster GKE está localizado."
+  type        = string
+  default     = "us-central1"
+  sensitive = false
 }

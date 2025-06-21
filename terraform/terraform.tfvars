@@ -1,9 +1,0 @@
-project_id = "corded-racer-455623-i7"
-region = "us-east1"
-zone = "us-east1-b"
-cluster_name = "gke-cluster-homol"
-network = "default"
-node_count = 2
-machine_type = "e2-medium"
-grafana_admin_password = "deuscaralho"
-gcp_credentials_path = "/home/runner/gcp_credentials/credentials.json"

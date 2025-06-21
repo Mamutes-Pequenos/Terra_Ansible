@@ -46,7 +46,6 @@ module "gke_cluster" {
 
 #modulo pro kube
 module "kubernetes_config" {
-    depends_on = [module.gke_cluster]
     source = "./kube"
     project_id                 = var.project_id
     gke_cluster_name           = module.gke_cluster.name

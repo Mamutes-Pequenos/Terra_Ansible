@@ -22,12 +22,6 @@ variable "cluster_name" {
   default     = "gke-cluster-semanal-homol"
 }
 
-variable "cluster_endpoint" {
-  description = "Endpoint do cluster GKE."
-  type        = string
-  sensitive   = true
-}
-
 variable "network" {
   description = "Nome da VPC a ser usada pelo cluster"
   type        = string

@@ -26,7 +26,7 @@ variable "grafana_admin_password" {
 variable "grafana_ip" {
   description = "Nome do endereço IP para o Grafana."
   type        = string
-  default     = "cluster-homol"
+  default     = "grafana-homol-ip"
 }
 
 variable "project_id" {
@@ -38,6 +38,6 @@ variable "project_id" {
 variable "region" {
   description = "Região do GCP onde o cluster GKE está localizado."
   type        = string
-  default     = "us-central1"
+  default     = "us-east11"
   sensitive = false
 }

@@ -4,7 +4,8 @@ resource "google_container_cluster" "primary" {
   remove_default_node_pool = true
   initial_node_count       = 2
   network    = var.network
-
+  
+  enable_autopilot = false
   ip_allocation_policy {}
 
     node_config {

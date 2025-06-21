@@ -56,6 +56,18 @@ jobs:
           terraform init -backend-config=pipe.tfbackend
       ## teste 15
 
+      - name: Set up kubectl and Helm
+        run: |
+          gcloud auth activate-service-account --key-file=/home/runner/gcp_credentials/credentials.json
+          gcloud container clusters get-credentials ${{ env.cluster_name }} \
+            --zone=us-east1-b --project=${{ secrets.GCP_PROJECT_ID }}
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
+          helm install prometheus-stack prometheus-community/kube-prometheus-stack \
+            --namespace monitoramento --create-namespace \
+            --set grafana.adminPassword=${{ secrets.GRAFANA_ADMIN_PASSWORD }}
+
+
       - name: Terraform Plan
         run: |
           cd terraform

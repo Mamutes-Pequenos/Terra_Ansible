@@ -20,6 +20,12 @@ variable "grafana_admin_password" {
   sensitive   = true
 }
 
+variable "grafana_ip" {
+  description = "Nome do endereço IP para o Grafana."
+  type        = string
+  default     = "grafana-homol-ip"
+}
+
 variable "gke_zone" {
   description = "Zona GCP específica para o cluster GKE (ex: us-central1-a)."
   type        = string

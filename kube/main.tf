@@ -4,6 +4,10 @@ data "google_compute_address" "grafana_homol_ip" {
     region = var.region
 }
 
+output "grafana_homol_ip" {
+  value = google_compute_address.grafana_homol_ip.address
+}
+
 resource "helm_release" "prometheus_stack" {
     name       = "promo-stack"
     repository = "https://prometheus-community.github.io/helm-charts"

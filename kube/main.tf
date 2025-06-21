@@ -1,4 +1,4 @@
-data "google_compute_address" "grafana_homol_ip" {
+resource "google_compute_address" "grafana_homol_ip" {
     name = var.grafana_ip
     project = var.project_id
     region = var.region

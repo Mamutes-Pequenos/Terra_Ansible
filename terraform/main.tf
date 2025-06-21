@@ -37,7 +37,7 @@ provider "google" {
 
 #modulo pro gke
 module "gke_cluster" {
-  source       = "./terraform/gke"
+  source       = "./gke"
   project_id   = var.project_id
   cluster_name = var.cluster_name
   region       = var.region
@@ -46,7 +46,8 @@ module "gke_cluster" {
 
 #modulo pro kube
 module "kubernetes_config" {
-    source = "./terraform/kube"
+    depends_on = [module.gke_cluster]
+    source = "./kube"
     project_id                 = var.project_id
     gke_cluster_name           = module.gke_cluster.name
     gke_cluster_endpoint       = module.gke_cluster.endpoint

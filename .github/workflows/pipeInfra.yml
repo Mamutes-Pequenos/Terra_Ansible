@@ -54,7 +54,7 @@ jobs:
         run: |
           cd terraform
           terraform init -backend-config=pipe.tfbackend
-      ## teste 15
+      ## teste sei la....
 
       - name: Set up kubectl and Helm
         run: |

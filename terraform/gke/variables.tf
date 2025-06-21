@@ -20,3 +20,15 @@ variable "zone" {
   type        = string
   default     = "us-east1-b"  # Ou a zona que você quer usar
 }
+
+variable "network" {
+  description = "Nome da VPC a ser usada pelo cluster"
+  type        = string
+  default     = "default"
+}
+
+variable "machine_type" {
+  description = "Tipo de máquina a ser usada nos nós"
+  type        = string
+  default     = "e2-medium"
+}

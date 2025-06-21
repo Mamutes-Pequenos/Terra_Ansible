@@ -26,7 +26,7 @@ variable "grafana_admin_password" {
   type        = string
 }
 
-variable "gke_cluster_endpoint" {
+variable "cluster_endpoint" {
   description = "Endpoint do cluster GKE."
   type        = string
   sensitive   = true

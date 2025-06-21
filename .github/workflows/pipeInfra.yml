@@ -60,7 +60,7 @@ jobs:
         run: |
           gcloud auth activate-service-account --key-file=/home/runner/gcp_credentials/credentials.json
           gcloud container clusters get-credentials ${{ env.cluster_name }} \
-            --zone=us-east1-b --project=${{ secrets.GCP_PROJECT_ID }}
+            --region=us-east1 --project=${{ secrets.GCP_PROJECT_ID }}
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm repo update
           helm install prometheus-stack prometheus-community/kube-prometheus-stack \

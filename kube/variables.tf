@@ -26,7 +26,7 @@ variable "grafana_admin_password" {
 variable "grafana_ip" {
   description = "Nome do endereço IP para o Grafana."
   type        = string
-  default     = "cluster-semanal-homol"
+  default     = "cluster-homol"
 }
 
 variable "project_id" {

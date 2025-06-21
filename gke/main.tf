@@ -1,5 +1,5 @@
 resource "google_container_cluster" "primary" {
-  name     = var.cluster_name
+  name     = "cluster_semanal_homol"
   project  = var.project_id
   location = var.zone
 

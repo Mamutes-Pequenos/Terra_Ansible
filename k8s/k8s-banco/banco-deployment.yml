@@ -24,6 +24,6 @@ spec:
         - name: POSTGRES_PASSWORD
           value: "1010"
         - name: POSTGRES_DB
-          value: "greenLearning"  ## KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK EU CRIEI COMO O BANCO SE CHAMANDO 1010
+          value: "greenlearning"
         ports:
         - containerPort: 5432

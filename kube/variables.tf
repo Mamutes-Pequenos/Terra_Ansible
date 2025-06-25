@@ -38,6 +38,6 @@ variable "project_id" {
 variable "region" {
   description = "Região do GCP onde o cluster GKE está localizado."
   type        = string
-  default     = "us-east1"
+  default     = "us-central1"
   sensitive = false
 }

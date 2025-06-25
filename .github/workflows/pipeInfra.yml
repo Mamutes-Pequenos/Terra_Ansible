@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - developer6
+      - developer7
   workflow_dispatch:
 
 jobs:
@@ -36,7 +37,7 @@ jobs:
       - name: Setup do Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Executar Terraform para Staging
+      - name: Executar Terraform para homol
         env:
           TF_VAR_grafana_admin_password: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
         run: |

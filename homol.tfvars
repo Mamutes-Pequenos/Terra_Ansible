@@ -1,5 +1,5 @@
 project_id="corded-racer-455623-i7"
-region="us-east1"
-cluster_name="cluster-semanal-homol"
-gke_zone="us-east1-b"
+region="us-central1"
+cluster_name="cluster-semanal-prod"
+gke_zone="us-central1-b"
 grafana_ip="grafana-homol-ip"

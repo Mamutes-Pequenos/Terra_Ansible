@@ -1,11 +1,11 @@
-resource "google_compute_address" "grafana_homol_ip" {
+resource "google_compute_address" "grafana_prod_ip" {
     name = var.grafana_ip
     project = var.project_id
     region = var.region
 }
 
-output "grafana_homol_ip" {
-  value = google_compute_address.grafana_homol_ip.address
+output "grafana_prod_ip" {
+  value = google_compute_address.grafana_prod_ip.address
 }
 
 resource "helm_release" "prometheus_stack" {
@@ -25,7 +25,7 @@ resource "helm_release" "prometheus_stack" {
                 
                 service = {
                     type = "LoadBalancer"
-                    loadBalancerIP = resource.google_compute_address.grafana_homol_ip.address
+                    loadBalancerIP = resource.google_compute_address.grafana_prod_ip.address
                 }
             }
         })

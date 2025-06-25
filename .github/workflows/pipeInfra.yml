@@ -41,9 +41,9 @@ jobs:
         env:
           TF_VAR_grafana_admin_password: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
         run: |
-          terraform init -backend-config=homol.tfbackend
-          terraform workspace select homol || terraform workspace new homol
-          terraform plan -var-file="homol.tfvars" -out=tfplan
+          terraform init -backend-config=prod.tfbackend
+          terraform workspace select prod || terraform workspace new prod
+          terraform plan -var-file="prod.tfvars" -out=tfplan
           terraform apply -auto-approve tfplan
 
   deploy:

@@ -73,7 +73,7 @@ jobs:
 
       - name: Set cluster and nodepool dynamically
         run: |
-          if [ "${GITHUB_REF##*/}" = "main" ]; then
+          if [ "${GITHUB_REF##*/}" = "developer7" ]; then
             echo "cluster_name=cluster-semanal-prod"" >> $GITHUB_ENV
             echo "node_pool=cluster-semanal-prod"" >> $GITHUB_ENV
           else
@@ -85,7 +85,7 @@ jobs:
         run: |
           gcloud auth activate-service-account --key-file=/home/runner/gcp_credentials/credentials.json
           gcloud container clusters get-credentials ${{ env.cluster_name }} \
-            --zone=us-east1-b --project=${{ secrets.GCP_PROJECT_ID }}
+            --zone=us-central1-b --project=${{ secrets.GCP_PROJECT_ID }}
 
       - name: Apply Namespaces
         run: |

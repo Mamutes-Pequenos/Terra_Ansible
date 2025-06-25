@@ -35,7 +35,7 @@ jobs:
 
       - name: Setup do Terraform
         uses: hashicorp/setup-terraform@v3
-
+     #teste
       - name: Executar Terraform para Staging
         env:
           TF_VAR_grafana_admin_password: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}

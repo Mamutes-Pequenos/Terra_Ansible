@@ -1,2 +1,2 @@
-bucket = "gke-terra-infra-prod"
+bucket = "gke-terra-infra-prod1"
 prefix = "terraform/prod"

@@ -1,4 +1,4 @@
-project_id="corded-racer-455623-i7"
+project_id="wise-coyote-463420-r7"
 region="us-central1"
 cluster_name="cluster-semanal-prod"
 gke_zone="us-central1-b"

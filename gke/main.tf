@@ -10,7 +10,7 @@ resource "google_container_cluster" "primary" {
   initial_node_count = 2
 
   node_config {
-    machine_type = "n2-standard-4"
+    machine_type = "e2-medium"
     disk_type    = "pd-standard"
     disk_size_gb = 30
 

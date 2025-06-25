@@ -1,2 +1,2 @@
-bucket = "gke-terra-infra"
-prefix = "terraform/state"
+bucket = "gke-terra-infra-prod"
+prefix = "terraform/prod"
